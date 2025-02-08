@@ -42,18 +42,18 @@ namespace Bannerlord.EditingTools.ViewModels {
 			CopyAsEquipmentRoster();
 		}
 		private void CopyAsEquipmentRoster() {
-			List<Equipment> equippedItems = Enumerable.ToList(_inventoryLogic.InitialEquipmentCharacter.BattleEquipments);
-
-			var xmlDefinition = new SerializableEquipmentSet();
-
-			foreach (var equippedItemSet in equippedItems) {
-				for (int i = 0; i < 12; i++) {
-					if (equippedItemSet[i].Item != null)
-						xmlDefinition.Equipment.Add(new SerializableEquipment(SerializableEquipmentSet.EquipmentSlot[i], $"Item.{equippedItemSet[i].Item.StringId}"));
-				}
+			try {
+				Input.SetClipboardText(XmlExtension.SerializeObject(
+					SerializableEquipmentSet.FromEquipmentList(_inventoryVM.IsInWarSet 
+																			? _inventoryLogic.InitialEquipmentCharacter.BattleEquipments 
+																			: _inventoryLogic.InitialEquipmentCharacter.CivilianEquipments,
+																!_inventoryVM.IsInWarSet),
+					true,
+					true));
 			}
-
-			Input.SetClipboardText(XmlExtension.SerializeObject<SerializableEquipmentSet>(xmlDefinition));
+			catch(Exception ex) {
+				InformationManager.DisplayMessage(new InformationMessage($"Could not copy the equipment set to clipboard. Error: {ex.Message}"));
+			}
 		}
 		#endregion
 
@@ -66,7 +66,8 @@ namespace Bannerlord.EditingTools.ViewModels {
 
 				var equipment = SerializableEquipmentSet.ToEquipment(deserializedSet);
 
-				Hero.MainHero.BattleEquipment.FillFrom(equipment);
+				Equipment setReference = _inventoryVM.IsInWarSet ? Hero.MainHero.BattleEquipment : Hero.MainHero.CivilianEquipment;
+				setReference.FillFrom(equipment);
 
 				InventoryManager.Instance.CloseInventoryPresentation(false);
 				InventoryManager.OpenScreenAsInventory();

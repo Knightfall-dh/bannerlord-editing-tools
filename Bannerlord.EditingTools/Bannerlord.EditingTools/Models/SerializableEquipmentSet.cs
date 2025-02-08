@@ -28,6 +28,15 @@ namespace Bannerlord.EditingTools.Models {
 			"HorseHarness"
 		};
 
+		[XmlIgnore]
+		public Boolean IsCivilian { get;set; }
+
+		[XmlAttribute("civilian")]
+		public String CivilianAttribute {
+			get => IsCivilian ? "true" : null; // Only include if "true"
+			set => IsCivilian = value == "true";
+		}
+
 		[XmlElement("equipment")]
 		public List<SerializableEquipment> Equipment { get; set; } = new List<SerializableEquipment>();
 
@@ -45,6 +54,19 @@ namespace Bannerlord.EditingTools.Models {
 			}
 
 			return equipment;
+		}
+
+		public static SerializableEquipmentSet FromEquipmentList(IEnumerable<Equipment> equipmentList, Boolean isCivilian) {
+			var serializableEquipmentSet = new SerializableEquipmentSet();
+			serializableEquipmentSet.IsCivilian = isCivilian;
+			foreach (var equippedItemSet in equipmentList) {
+				for (int i = 0; i < 12; i++) {
+					if (equippedItemSet[i].Item != null)
+						serializableEquipmentSet.Equipment.Add(new SerializableEquipment(EquipmentSlot[i], $"Item.{equippedItemSet[i].Item.StringId}"));
+				}
+			}
+
+			return serializableEquipmentSet;
 		}
 	}
 }
