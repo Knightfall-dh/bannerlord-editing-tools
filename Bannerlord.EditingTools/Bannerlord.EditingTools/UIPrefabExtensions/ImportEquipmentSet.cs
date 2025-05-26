@@ -12,9 +12,9 @@ namespace Bannerlord.EditingTools.UIPrefabExtensions {
 		public ImportEquipmentSet() {
 			var firstChild = new XmlDocument();
 			firstChild.LoadXml(
-				@"<ButtonWidget Id=""ImportEquipmentButton"" Command.Click=""ImportEquipmentSetFromClipboard"" DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""120"" SuggestedHeight=""42"" HorizontalAlignment=""Right"" VerticalAlignment=""Top"" MarginRight=""120"" MarginTop=""770"" Brush=""Header.Tab.Center"">
+				@"<ButtonWidget Id=""ImportEquipmentButton"" Command.Click=""ImportEquipmentSetFromClipboard"" DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""100"" SuggestedHeight=""45"" HorizontalAlignment=""Right"" VerticalAlignment=""Top"" MarginRight=""120"" MarginTop=""800"" Brush=""Header.Tab.Center"">
                           <Children>
-                            <TextWidget WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Clan.TabControl.Text"" Text=""Import Set"" />
+                            <TextWidget WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Clan.TabControl.Text"" Text=""Import"" />
                           </Children>
                         </ButtonWidget>");
 			nodes = new List<XmlNode> { firstChild };

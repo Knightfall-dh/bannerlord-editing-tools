@@ -23,30 +23,53 @@ namespace Bannerlord.EditingTools.ViewModels {
 	[ViewModelMixin]
 	internal class InventoryExtensionVM : BaseViewModelMixin<SPInventoryVM> {
 		private SPInventoryVM _inventoryVM;
-		private InventoryLogic _inventoryLogic;
+        private InventoryLogic? _inventoryLogic;
 
-		
+        public InventoryExtensionVM(SPInventoryVM vm) : base(vm)
+        {
+            _inventoryVM = vm;
+            var inventoryLogicField = ReflectionUtility.GetFieldValue(vm, "_inventoryLogic");
 
-		public InventoryExtensionVM(SPInventoryVM vm) : base(vm) {
-			_inventoryVM = vm;
-			var inventoryLogicField = ReflectionUtility.GetFieldValue(vm, "_inventoryLogic");
+            if (inventoryLogicField != null)
+            {
+                _inventoryLogic = (InventoryLogic)inventoryLogicField;
+            }
+        }
 
-			if (inventoryLogicField != null) {
-				_inventoryLogic = (InventoryLogic)inventoryLogicField;
-			}
-		}
+        #region Copy Roster
+        [DataSourceMethod]
+        public void CopyEquipmentRosterToClipboard()
+        {
+            try
+            {
+                Input.SetClipboardText(XmlExtension.SerializeObject(
+                    SerializableEquipmentRoster.FromEquipmentList(
+                        _inventoryVM.IsInWarSet
+                            ? _inventoryLogic.InitialEquipmentCharacter.BattleEquipments
+                            : _inventoryLogic.InitialEquipmentCharacter.CivilianEquipments,
+                        !_inventoryVM.IsInWarSet
+                    ),
+                    true,
+                    true));
+            }
+            catch (Exception ex)
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"Could not copy the equipment roster to clipboard. Error: {ex.Message}"));
+            }
+        }
+        #endregion
 
-		#region Copy Set
-		[DataSourceMethod]
+        #region Copy Set
+        [DataSourceMethod]
 		public void CopyEquipmentSetToClipboard() {
 			CopyAsEquipmentRoster();
 		}
 		private void CopyAsEquipmentRoster() {
 			try {
 				Input.SetClipboardText(XmlExtension.SerializeObject(
-					SerializableEquipmentSet.FromEquipmentList(_inventoryVM.IsInWarSet 
-																			? _inventoryLogic.InitialEquipmentCharacter.BattleEquipments 
-																			: _inventoryLogic.InitialEquipmentCharacter.CivilianEquipments,
+					SerializableEquipmentSet.FromEquipmentList(_inventoryVM.IsInWarSet
+                                                                            ? _inventoryLogic!.InitialEquipmentCharacter.BattleEquipments
+                                                                            : _inventoryLogic!.InitialEquipmentCharacter.CivilianEquipments,
 																!_inventoryVM.IsInWarSet),
 					true,
 					true));
@@ -55,27 +78,44 @@ namespace Bannerlord.EditingTools.ViewModels {
 				InformationManager.DisplayMessage(new InformationMessage($"Could not copy the equipment set to clipboard. Error: {ex.Message}"));
 			}
 		}
-		#endregion
+        #endregion
 
-		#region Import Set
-		[DataSourceMethod]
-		public void ImportEquipmentSetFromClipboard() {
-			try {
-				var clipboardText = Input.GetClipboardText();
-				var deserializedSet = XmlExtension.DeserializeObject<SerializableEquipmentSet>(clipboardText, "EquipmentRoster");
+        #region Import Set
+        [DataSourceMethod]
+        public void ImportEquipmentSetFromClipboard()
+        {
+            try
+            {
+                var clipboardText = Input.GetClipboardText();
 
-				var equipment = SerializableEquipmentSet.ToEquipment(deserializedSet);
+                Equipment equipment;
 
-				Equipment setReference = _inventoryVM.IsInWarSet ? Hero.MainHero.BattleEquipment : Hero.MainHero.CivilianEquipment;
-				setReference.FillFrom(equipment);
+                if (clipboardText.Contains("<EquipmentRoster"))
+                {
+                    var deserializedRoster = XmlExtension.DeserializeObject<SerializableEquipmentRoster>(clipboardText, "EquipmentRoster");
+                    equipment = SerializableEquipmentRoster.ToEquipment(deserializedRoster);
+                }
+                else if (clipboardText.Contains("<EquipmentSet"))
+                {
+                    var deserializedSet = XmlExtension.DeserializeObject<SerializableEquipmentSet>(clipboardText, "EquipmentSet");
+                    equipment = SerializableEquipmentSet.ToEquipment(deserializedSet);
+                }
+                else
+                {
+                    throw new Exception("Unknown format. Expected <EquipmentRoster> or <EquipmentSet> as root element.");
+                }
 
-				InventoryManager.Instance.CloseInventoryPresentation(false);
-				InventoryManager.OpenScreenAsInventory();
-			}
-			catch(Exception ex) {
-				InformationManager.DisplayMessage(new InformationMessage($"Could not import from clipboard. Error: {ex.Message}"));
-			}
-		}
-		#endregion
-	}
+                Equipment setReference = _inventoryVM.IsInWarSet ? Hero.MainHero.BattleEquipment : Hero.MainHero.CivilianEquipment;
+                setReference.FillFrom(equipment);
+
+                InventoryManager.Instance.CloseInventoryPresentation(false);
+                InventoryManager.OpenScreenAsInventory();
+            }
+            catch (Exception ex)
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"Could not import from clipboard. Error: {ex.Message}"));
+            }
+        }
+        #endregion
+    }
 }

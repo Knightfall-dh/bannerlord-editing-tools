@@ -12,9 +12,9 @@ namespace Bannerlord.EditingTools.UIPrefabExtensions {
 		public CopyEquipmentSet() {
 			var firstChild = new XmlDocument();
 			firstChild.LoadXml(
-				@"<ButtonWidget Id=""CopyEquipmentButton"" Command.Click=""CopyEquipmentSetToClipboard"" DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""120"" SuggestedHeight=""42"" HorizontalAlignment=""Right"" VerticalAlignment=""Top"" MarginRight=""120"" MarginTop=""700"" Brush=""Header.Tab.Center"">
+				@"<ButtonWidget Id=""CopyEquipmentButton"" Command.Click=""CopyEquipmentSetToClipboard"" DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""100"" SuggestedHeight=""45"" HorizontalAlignment=""Right"" VerticalAlignment=""Top"" MarginRight=""120"" MarginTop=""700"" Brush=""Header.Tab.Center"">
                           <Children>
-                            <TextWidget WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Clan.TabControl.Text"" Text=""Copy Set"" />
+                            <TextWidget WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Clan.TabControl.Text"" Text=""Set"" />
                           </Children>
                         </ButtonWidget>");
 			nodes = new List<XmlNode> { firstChild };
