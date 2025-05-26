@@ -8,15 +8,15 @@ This is a module made for all the people suffering from the painful and tedious 
 
 ## Features
 
-I've added two buttons to the inventory screen, `Copy Set` and `Import Set`.
+I've added three buttons to the inventory screen, `Set/Roster` and `Import`.
 
-`Copy Set` will create a `EquipmentRoster` element with all the items equipped by the character set for the exact slots that each equipement is in and add it to your clipboard so you can past the contents in the troop xml file.
+`Set/Roster` will create a `EquipmentRoster/EquipmenSet` element with all the items equipped by the character set for the exact slots that each equipement is in and add it to your clipboard so you can past the contents in the troop xml file.
 
 ![Copy Set Gif](https://github.com/S-Jakubauskas/bannerlord-editing-tools/blob/main/editingtoolsample.gif)
 
 Please note that Bannerlord mixes character equipment so for every set it is highly advisable to keep the same types in specific slots, for example shields in slot 2. This will prevent troops spawning with two shields, for example.
 
-`Import Set` does the opposite, it will read your clipboard and equip the main character with the items. It should be useful especially when editing existing troops so you can get a baseline ready without having to search for all pieces of equipment individually.
+`Import` does the opposite, it will read your clipboard and equip the main character with the items. It should be useful especially when editing existing troops so you can get a baseline ready without having to search for all pieces of equipment individually.
 
 ![Import Set Gif](https://github.com/S-Jakubauskas/bannerlord-editing-tools/blob/main/importequipmentsample.gif)
 
